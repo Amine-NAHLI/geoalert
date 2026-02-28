@@ -1,0 +1,35 @@
+{
+  "name": "waze_project",
+  "version": "1.0.0",
+  "description": "Projet Waze_UPF - Site Marocain avec Express, MongoDB et Leaflet",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "waze",
+    "maroc",
+    "leaflet",
+    "express",
+    "mongodb",
+    "auth",
+    "incidents"
+  ],
+  "author": "Kenza Boutarfass / Amine Nahli / Lina Oujdi",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "connect-mongo": "^4.6.0",
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "leaflet": "^1.9.4",
+    "mongoose": "^8.15.1",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
