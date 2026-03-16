@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/sty.css">
+
+  
+</head>
+<body>
+  <div class="auth-container"> <!-- 8. Conteneur principal pour le formulaire d'authentification -->
+    <h1>Connexion</h1>
+    <% if (typeof error !== 'undefined' && error) { %> <!-- 10. Bloc conditionnel pour afficher les erreurs -->
+      <p class="error"><%= error %></p> <!-- 11. Paragraphe d'erreur avec classe pour le style -->
+    <% } %>
+    <!-- 12. Formulaire de connexion avec action vers la route /auth/login -->
+    <form action="/auth/login" method="POST">
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" name="password" placeholder="Mot de passe" required>
+      <button type="submit">Se connecter</button>
+    </form>
+    <p>Pas encore inscrit ? <a href="/auth/register">S'inscrire</a></p>
+  </div>
+</body>
+</html>
