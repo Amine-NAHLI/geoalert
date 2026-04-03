@@ -2,102 +2,515 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#1a2a6c">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GeoAlert - Inscription">
   <title>GeoAlert - Inscription</title>
-  <link rel="stylesheet" href="/style.css">
-  
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
   <style>
-    /* ============================================
-       STYLES SPÉCIFIQUES PAGE INSCRIPTION
-       ============================================ */
-    
-    body {
+    * {
       margin: 0;
       padding: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: linear-gradient(135deg, #1a2a6c 0%, #2a3f8f 50%, #b21f1f 100%);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      box-sizing: border-box;
     }
-    
-    .header-auth {
-      background: linear-gradient(90deg, #1a2a6c, #b21f1f, #1a2a6c);
+
+    html, body {
+      height: 100%;
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    body {
+      background: #050510;
       color: white;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      position: relative;
     }
-    
-    .header-auth h1 {
-      margin: 0;
+
+    /* Custom Cursor */
+    .cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #c0392b;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.1s ease;
+    }
+
+    .cursor-trail {
+      position: fixed;
+      width: 4px;
+      height: 4px;
+      background: #c0392b;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.7;
+    }
+
+    /* Canvas Background */
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    /* Three.js Container */
+    #three-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.8;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 20px 40px;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      background: rgba(5, 5, 16, 0.8);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Orbitron', monospace;
       font-size: 24px;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      color: #c0392b;
+      text-shadow: 0 0 20px rgba(192, 57, 43, 0.5);
     }
-    
-    .auth-wrapper {
-      flex: 1;
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-link:hover {
+      color: #c0392b;
+    }
+
+    /* Register Container */
+    .register-container {
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 120px 20px 80px;
     }
-    
-    .auth-container {
-      width: 100%;
+
+    .register-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px;
       max-width: 400px;
-      background: white;
-      border-radius: 10px;
-      padding: 30px 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .register-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .register-card:hover::before {
+      left: 100%;
+    }
+
+    .register-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 32px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 10px;
+      text-shadow: 0 0 20px rgba(192, 57, 43, 0.5);
+    }
+
+    .register-title span {
+      color: #c0392b;
+    }
+
+    .register-subtitle {
+      color: #aaa;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .register-form {
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
-    
-    .auth-container h1 {
-      text-align: center;
-      color: #1a2a6c;
-      margin: 0 0 10px 0;
-      font-size: 28px;
-      font-weight: 700;
-    }
-    
-    .auth-subtitle {
-      text-align: center;
-      color: #666;
-      margin: 0;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-    
-    .auth-container form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    
+
     .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      text-align: left;
     }
-    
-    .form-group label {
+
+    .form-label {
       display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: #333;
+      color: #aaa;
+      font-size: 14px;
+      margin-bottom: 8px;
+      font-weight: 500;
     }
-    
-    .auth-container input {
+
+    .form-input {
       width: 100%;
-      min-height: 48px;
-      padding: 12px 15px;
+      padding: 15px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #c0392b;
+      box-shadow: 0 0 20px rgba(192, 57, 43, 0.3);
+    }
+
+    .form-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .register-btn {
+      padding: 16px 32px;
+      background: #c0392b;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .register-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(192, 57, 43, 0.4);
+    }
+
+    .register-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .register-btn:hover::before {
+      left: 100%;
+    }
+
+    .login-link {
+      margin-top: 20px;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .login-link a {
+      color: #c0392b;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .login-link a:hover {
+      color: white;
+    }
+
+    .error-message {
+      background: rgba(192, 57, 43, 0.2);
+      border: 1px solid #c0392b;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      color: #c0392b;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 15px 20px;
+      }
+
+      .nav-links {
+        gap: 20px;
+      }
+
+      .register-container {
+        padding: 100px 20px 60px;
+      }
+
+      .register-card {
+        padding: 30px 20px;
+        margin: 0 10px;
+      }
+
+      .register-title {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Custom Cursor -->
+  <div class="cursor"></div>
+  <div class="cursor-trail"></div>
+
+  <!-- Background Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Three.js Container -->
+  <div id="three-container"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="logo">GeoAlert</div>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Accueil</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Register Section -->
+  <div class="register-container">
+    <div class="register-card">
+      <h1 class="register-title">Inscription</h1>
+      <p class="register-subtitle">Créez votre compte GeoAlert</p>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error-message">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <form class="register-form" action="/auth/register" method="POST">
+        <div class="form-group">
+          <label class="form-label" for="name">Nom complet</label>
+          <input class="form-input" type="text" id="name" name="name" placeholder="Votre nom complet" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="votre@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Mot de passe</label>
+          <input class="form-input" type="password" id="password" name="password" placeholder="Votre mot de passe" required>
+        </div>
+
+        <button class="register-btn" type="submit">S'inscrire</button>
+      </form>
+
+      <div class="login-link">
+        Déjà inscrit ? <a href="/auth/login">Se connecter</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Custom Cursor
+    const cursor = document.querySelector('.cursor');
+    const cursorTrail = document.querySelector('.cursor-trail');
+    let mouseX = 0, mouseY = 0;
+    let trailX = 0, trailY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursor.style.left = mouseX - 10 + 'px';
+      cursor.style.top = mouseY - 10 + 'px';
+    });
+
+    function updateTrail() {
+      trailX += (mouseX - trailX) * 0.1;
+      trailY += (mouseY - trailY) * 0.1;
+      cursorTrail.style.left = trailX - 2 + 'px';
+      cursorTrail.style.top = trailY - 2 + 'px';
+      requestAnimationFrame(updateTrail);
+    }
+    updateTrail();
+
+    // Background Stars
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const stars = [];
+    for (let i = 0; i < 200; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2,
+        opacity: Math.random(),
+        speed: Math.random() * 0.5
+      });
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.opacity += star.speed * 0.01;
+        if (star.opacity > 1) star.opacity = 0;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    animateStars();
+
+    // Three.js Globe
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('three-container').appendChild(renderer.domElement);
+
+    // Earth
+    const earthGeometry = new THREE.SphereGeometry(5, 64, 64);
+    const earthMaterial = new THREE.MeshPhongMaterial({
+      map: new THREE.TextureLoader().load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'),
+      transparent: true,
+      opacity: 0.8
+    });
+    const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+    scene.add(earth);
+
+    // Moroccan Cities
+    const cities = [
+      { name: 'Casablanca', lat: 33.5731, lng: -7.5898 },
+      { name: 'Rabat', lat: 34.0209, lng: -6.8416 },
+      { name: 'Marrakech', lat: 31.6295, lng: -8.0083 },
+      { name: 'Fès', lat: 34.0331, lng: -5.0003 },
+      { name: 'Tanger', lat: 35.7595, lng: -5.8340 }
+    ];
+
+    const cityPoints = [];
+    cities.forEach(city => {
+      const phi = (90 - city.lat) * (Math.PI / 180);
+      const theta = (city.lng + 180) * (Math.PI / 180);
+      const x = -(5.2 * Math.sin(phi) * Math.cos(theta));
+      const z = 5.2 * Math.sin(phi) * Math.sin(theta);
+      const y = 5.2 * Math.cos(phi);
+
+      const pointGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+      const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xc0392b });
+      const point = new THREE.Mesh(pointGeometry, pointMaterial);
+      point.position.set(x, y, z);
+      scene.add(point);
+      cityPoints.push(point);
+    });
+
+    // Connection Lines
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0xc0392b, transparent: true, opacity: 0.6 });
+    for (let i = 0; i < cityPoints.length; i++) {
+      for (let j = i + 1; j < cityPoints.length; j++) {
+        const geometry = new THREE.BufferGeometry().setFromPoints([
+          cityPoints[i].position,
+          cityPoints[j].position
+        ]);
+        const line = new THREE.Line(geometry, lineMaterial);
+        scene.add(line);
+      }
+    }
+
+    // Particles
+    const particleGeometry = new THREE.BufferGeometry();
+    const particleCount = 1000;
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 50;
+    }
+    particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particleMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.02 });
+    const particles = new THREE.Points(particleGeometry, particleMaterial);
+    scene.add(particles);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(1, 1, 1);
+    scene.add(directionalLight);
+
+    camera.position.z = 15;
+
+    // Animation
+    function animate() {
+      requestAnimationFrame(animate);
+      earth.rotation.y += 0.005;
+      particles.rotation.y += 0.001;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Resize Handler
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
       border: 1.5px solid #ddd;
       border-radius: 6px;
       font-size: 16px;
