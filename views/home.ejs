@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waze Project - Accueil</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    /* Styles spécifiques pour cette page */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      background: #f5f5f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .header {
+      background: linear-gradient(90deg, #1a2a6c, #b21f1f, #1a2a6c);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .logout-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    
+    .logout-btn:hover {
+      background: #c0392b;
+    }
+    
+    .main-content {
+      display: flex;
+      flex: 1;
+      padding: 20px;
+      gap: 20px;
+      overflow: hidden;
+      height: calc(100vh - 120px);
+    }
+    
+    .map-container {
+      flex: 2;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .sidebar {
+      flex: 1;
+      min-width: 320px;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+    }
+    
+    .form-container {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #eee;
+    }
+    
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1a2a6c;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+    
+    select, input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: white;
+      font-size: 16px;
+    }
+    
+    select:focus, input:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .locate-btn {
+      background: #3498db;
+      color: white;
+    }
+    
+    .locate-btn:hover {
+      background: #2980b9;
+    }
+    
+    .submit-btn {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    .submit-btn:hover {
+      background: #45a049;
+    }
+    
+    .incidents-container {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #eee;
+    }
+    
+    .incidents-container h3 {
+      margin-bottom: 15px;
+      color: #1a2a6c;
+    }
+    
+    .incident-list {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .incident-item {
+      background: white;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .incident-type {
+      font-weight: bold;
+      color: #1a2a6c;
+    }
+    
+    .incident-coords {
+      font-size: 0.9em;
+      color: #666;
+    }
+    
+    .incident-time {
+      font-size: 0.8em;
+      color: #999;
+    }
+    
+    footer {
+      background: #1a2a6c;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 0.9em;
+    }
+    
+    @media (max-width: 768px) {
+      .main-content {
+        flex-direction: column;
+      }
+      
+      .map-container {
+        height: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">Waze Project</div>
+    <div class="user-info">
+      <span>Bienvenue </span>
+      <a href="/auth/logout" class="logout-btn">Déconnexion</a>
+    </div>
+  </div>
+  
+  <div class="main-content">
+    <div class="map-container">
+      <div id="map"></div>
+    </div>
+    
+    <div class="sidebar">
+      <div class="form-container">
+        <h2>Ajouter un incident</h2>
+        <form id="incident-form">
+          <div class="form-group">
+            <label for="type">Type d'incident</label>
+            <select name="type" id="type" required>
+              <option value="">-- Choisir le type --</option>
+              <option value="accident">Accident</option>
+              <option value="bouchon">Bouchon</option>
+              <option value="radar">Radar</option>
+              <option value="travaux">Travaux</option>
+              <option value="danger">Danger routier</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="lat">Latitude</label>
+            <input type="number" id="lat" name="lat" placeholder="Latitude" step="any" readonly required />
+          </div>
+          
+          <div class="form-group">
+            <label for="lng">Longitude</label>
+            <input type="number" id="lng" name="lng" placeholder="Longitude" step="any" readonly required />
+          </div>
+          
+          <div class="btn-group">
+            <button type="button" class="btn locate-btn" id="locate-btn">
+              Activer la localisation
+            </button>
+            <button type="submit" class="btn submit-btn">
+              Ajouter l'incident
+            </button>
+          </div>
+        </form>
+      </div>
+      
+      <div class="incidents-container">
+        <h3>Incidents récents</h3>
+        <ul class="incident-list" id="incident-list">
+           <!-- Boucle EJS pour afficher chaque incident -->
+          <% incidents.forEach(incident => { %>
+            <li class="incident-item">
+              <div class="incident-type"><%= incident.type %></div>
+              <div class="incident-coords"><%= incident.lat.toFixed(5) %>, <%= incident.lng.toFixed(5) %></div>
+              <div class="incident-time"><%= new Date(incident.createdAt).toLocaleString('fr-FR') %></div>
+            </li>
+          <% }); %>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+    Site marocain réalisé par les légendes Kenza Boutarfass / Amine Nahli / Lina Oujdi
+  </footer>
+<!-- Bibliothèque Leaflet pour les cartes -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script> 
+  <!-- Bibliothèque Socket.IO pour la communication en temps réel -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- Script principal de l'application -->
+  <script>
+    // Initialisation de la carte centrée sur le Maroc (coordonnées de Rabat)
+    const map = L.map('map').setView([34.0209, -6.8416], 7);
+    // Ajout de la couche de tuiles OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributeurs'
+    }).addTo(map);
+// Variables pour gérer les marqueurs
+
+    let marker;  // Marqueur de position sélectionnée
+    let userPositionMarker; // Marqueur de position utilisateur
+    const socket = io(); // Initialisation de la connexion Socket.IO
+
+
+    // Fonction pour charger les incidents depuis le serveur
+    async function loadIncidents() {
+      try {
+        // Récupération des incidents via l'API
+        const response = await fetch('/auth/api/incidents');
+        const incidents = await response.json();
+        // Création d'un cercle rouge pour représenter l'incident
+        incidents.forEach(incident => {
+          // Ajouter un cercle rouge pour l'incident
+          L.circle([incident.lat, incident.lng], {
+            radius: 100, // Rayon en mètres
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.7
+          }).addTo(map)  // Ajout à la carte
+          .bindPopup(`<strong>${incident.type}</strong><br>${new Date(incident.createdAt).toLocaleString('fr-FR')}`);
+        });
+      } catch (error) {
+        console.error('Erreur lors du chargement des incidents:', error);
+      }
+    }
+
+   // Gestionnaire d'événement pour le bouton de géolocalisation
+    document.getElementById('locate-btn').addEventListener('click', function() {
+      // Vérification du support de la géolocalisation
+      if (navigator.geolocation) {
+        // Récupération de la position actuelle
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            // Extraction des coordonnées
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            // Mise à jour des champs du formulaire
+            document.getElementById('lat').value = lat.toFixed(5);
+            document.getElementById('lng').value = lng.toFixed(5);
+            
+           // Centrage de la carte sur la position
+            map.setView([lat, lng], 15);
+            
+            // Mettre à jour le marqueur de position Utilisateur
+            if (userPositionMarker) map.removeLayer(userPositionMarker);
+            // Création d'un nouveau marqueur avec effet de pulsation
+            userPositionMarker = L.marker([lat, lng], {
+              icon: L.divIcon({
+                className: 'user-position-marker',
+                html: '<div class="pulse"></div>',
+                iconSize: [20, 20]
+              })
+            }).addTo(map)
+              .bindPopup('Votre position actuelle')
+              .openPopup();// Ouverture automatique
+          },
+          function(error) {
+            alert('Erreur de géolocalisation : ' + error.message);
+          },
+          {
+            enableHighAccuracy: true, // Haute précision
+            timeout: 5000, // Délai d'attente (5s)
+            maximumAge: 0 // Pas de cache
+          }
+        );
+      } else {
+        alert('La géolocalisation n\'est pas supportée par votre navigateur.');
+      }
+    });
+
+    // Gestion du clic sur la carte
+    map.on('click', function(e) {
+      // Récupération des coordonnées du clic
+      const { lat, lng } = e.latlng;
+       // Mise à jour des champs du formulaire
+      document.getElementById('lat').value = lat.toFixed(5);
+      document.getElementById('lng').value = lng.toFixed(5);
+// Suppression de l'ancien marqueur s'il existe
+      if (marker) map.removeLayer(marker);
+      // Création d'un nouveau marqueur à la position cliquée
+      marker = L.marker([lat, lng]).addTo(map)
+        .bindPopup('Position sélectionnée')
+        .openPopup();
+    });
+
+    // Envoi du formulaire
+    document.getElementById('incident-form').addEventListener('submit', async function(e) {
+      e.preventDefault();// Empêche le rechargement de la page
+      // Récupération des valeurs du formulaire
+      const type = document.getElementById('type').value;
+      const lat = document.getElementById('lat').value;
+      const lng = document.getElementById('lng').value;
+      // Validation des champs
+      if (!type || !lat || !lng) {
+        alert('Veuillez remplir tous les champs');
+        return;
+      }
+      
+      try {
+        // Envoi des données au serveur
+        const response = await fetch('/auth/add-incident', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ type, lat, lng })
+        });
+        
+        if (response.ok) {
+          // Réinitialiser le formulaire
+          document.getElementById('type').value = '';
+          document.getElementById('lat').value = '';
+          document.getElementById('lng').value = '';
+          
+          alert('Incident ajouté avec succès!');
+        } else {
+          // Gestion des erreurs serveur
+          const error = await response.text();
+          alert('Erreur: ' + error);
+        }
+      } catch (err) {
+        console.error('Erreur:', err);
+        alert('Une erreur est survenue lors de l\'ajout de l\'incident');
+      }
+    });
+
+    // Recevoir les nouveaux incidents via Socket.io
+    socket.on('newIncident', (incident) => {
+      // Ajouter un cercle rouge pour le nouvel incident
+      L.circle([incident.lat, incident.lng], {
+        radius: 100, // Rayon en mètres
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.7
+      }).addTo(map)
+      .bindPopup(`<strong>${incident.type}</strong><br>${new Date(incident.createdAt).toLocaleString('fr-FR')}`);
+      
+      // Ajouter à la liste
+      const incidentList = document.getElementById('incident-list');
+      const newItem = document.createElement('li');
+      newItem.className = 'incident-item';
+      newItem.innerHTML = `
+        <div class="incident-type">${incident.type}</div>
+        <div class="incident-coords">${incident.lat.toFixed(5)}, ${incident.lng.toFixed(5)}</div>
+        <div class="incident-time">${new Date(incident.createdAt).toLocaleString('fr-FR')}</div>
+      `;
+      // Insertion en haut de la liste
+      incidentList.insertBefore(newItem, incidentList.firstChild);
+    });
+
+    // Charger les incidents au démarrage
+    loadIncidents();
+  </script>
+</body>
+</html>
