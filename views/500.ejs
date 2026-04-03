@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <!-- CORRECTION : Ajout d'un titre par défaut -->
+  <title>Erreur Serveur</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<script src="/script.js"></script>
+<body>
+  <div class="error-container">
+    <h1>Erreur 500</h1>
+    <!-- CORRECTION : Vérification de l'existence de la variable error -->
+    <% if (typeof error !== 'undefined') { %>
+      <p class="error-message"><%= error %></p>
+    <% } else { %>
+      <p>Une erreur interne du serveur s'est produite</p>
+    <% } %>
+    <a href="/" class="home-link">Retour à l'accueil</a>
+  </div>
+</body>
+</html>
