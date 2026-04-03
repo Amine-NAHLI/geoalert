@@ -302,9 +302,9 @@ ISC License - Voir le fichier `package.json` pour plus de détails.
 ## 📞 Support
 
 Pour toute question ou problème, contactez les auteurs du projet :
-- Kenza Boutarfass
-- Amine Nahli
-- Lina Oujdi
+- Kenza Boutarfass--boutarfasskenza@gmail.com
+- Amine Nahli--nahli-ami@upf.ac.ma   
+- Lina Oujdi--oujdilina@gmail.com
 
 ---
 
