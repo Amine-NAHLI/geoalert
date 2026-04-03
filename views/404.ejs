@@ -2,15 +2,241 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <!-- CORRECTION : Ajout d'un titre par défaut -->
-  <title>Page non trouvée</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1a2a6c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Page non trouvée - GeoAlert</title>
   <link rel="stylesheet" href="/style.css">
+  
+  <style>
+    /* ============================================
+       PAGE D'ERREUR 404 - RESPONSIVE
+       ============================================ */
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a2a6c 0%, #2a3f8f 50%, #b21f1f 100%);
+      padding: 20px;
+    }
+    
+    .error-container {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      max-width: 500px;
+      padding: 40px 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: bounce-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    @keyframes bounce-in {
+      0% {
+        opacity: 0;
+        transform: scale(0.85);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    /* EMOJI ERREUR */
+    .error-emoji {
+      font-size: 64px;
+      display: block;
+      margin: 0;
+      animation: shake 0.6s ease-in-out;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-5deg); }
+      75% { transform: rotate(5deg); }
+    }
+    
+    /* CODE D'ERREUR */
+    .error-code {
+      font-size: 72px;
+      font-weight: 900;
+      color: #b21f1f;
+      margin: 0;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    
+    /* TITRE ERREUR */
+    .error-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a2a6c;
+      margin: 0;
+      line-height: 1.3;
+    }
+    
+    /* MESSAGE ERREUR */
+    .error-message {
+      font-size: 15px;
+      color: #666;
+      margin: 0;
+      line-height: 1.6;
+    }
+    
+    /* BOUTON RETOUR */
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 14px 32px;
+      background: linear-gradient(90deg, #1a2a6c, #b21f1f);
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 24px rgba(26, 42, 108, 0.35);
+      border: none;
+      margin-top: 10px;
+    }
+    
+    .home-link:hover,
+    .home-link:focus {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(26, 42, 108, 0.45);
+    }
+    
+    .home-link:active {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(26, 42, 108, 0.3);
+    }
+    
+    /* RESPONSIVE MOBILE < 480px */
+    @media (max-width: 479px) {
+      body {
+        padding: 16px;
+      }
+      
+      .error-container {
+        padding: 32px 16px;
+        gap: 16px;
+        border-radius: 10px;
+      }
+      
+      .error-emoji {
+        font-size: 52px;
+      }
+      
+      .error-code {
+        font-size: 56px;
+      }
+      
+      .error-title {
+        font-size: 24px;
+      }
+      
+      .error-message {
+        font-size: 14px;
+      }
+      
+      .home-link {
+        min-height: 44px;
+        padding: 12px 24px;
+        font-size: 14px;
+        width: 100%;
+      }
+    }
+    
+    /* RESPONSIVE TABLET 480px - 768px */
+    @media (min-width: 480px) and (max-width: 767px) {
+      .error-container {
+        padding: 40px 24px;
+      }
+      
+      .error-emoji {
+        font-size: 60px;
+      }
+      
+      .error-code {
+        font-size: 64px;
+      }
+      
+      .error-title {
+        font-size: 26px;
+      }
+    }
+    
+    /* RESPONSIVE DESKTOP >= 768px */
+    @media (min-width: 768px) {
+      body {
+        padding: 40px 20px;
+      }
+      
+      .error-container {
+        padding: 60px 40px;
+        gap: 24px;
+        border-radius: 16px;
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.25);
+      }
+      
+      .error-emoji {
+        font-size: 80px;
+      }
+      
+      .error-code {
+        font-size: 88px;
+        margin: 10px 0;
+      }
+      
+      .error-title {
+        font-size: 36px;
+      }
+      
+      .error-message {
+        font-size: 16px;
+        max-width: 400px;
+      }
+      
+      .home-link {
+        min-height: 52px;
+        padding: 16px 40px;
+        font-size: 16px;
+        margin-top: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="error-container">
-    <h1>Erreur 404</h1>
-    <p>La page que vous cherchez n'existe pas</p>
-    <a href="/" class="home-link">Retour à l'accueil</a>
+    <span class="error-emoji">🗺️❌</span>
+    <h1 class="error-code">404</h1>
+    <h2 class="error-title">Page non trouvée</h2>
+    <p class="error-message">Désolé, la page que vous recherchez n'existe pas ou a été supprimée.</p>
+    <a href="/" class="home-link">🏠 Retour à l'accueil</a>
   </div>
 </body>
 </html>

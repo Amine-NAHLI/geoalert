@@ -2,245 +2,142 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Waze Project - Accueil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1a2a6c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>GeoAlert - Carte d'incidents en temps réel</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="/style.css">
+  
   <style>
-    /* Styles spécifiques pour cette page */
-    body {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      margin: 0;
-      background: #f5f5f5;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    /* ============================================
+       STYLES SUPPLÉMENTAIRES POUR L'HTML
+       ============================================ */
     
-    .header {
-      background: linear-gradient(90deg, #1a2a6c, #b21f1f, #1a2a6c);
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    }
-    
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
-    }
-    
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    
-    .logout-btn {
-      background: #e74c3c;
+    .toggle-sidebar-btn {
+      display: none;
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 1000;
+      background-color: #1a2a6c;
       color: white;
       border: none;
-      padding: 8px 15px;
+      padding: 8px 12px;
       border-radius: 4px;
       cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      min-height: 44px;
+      min-width: 44px;
+      transition: all 0.3s ease;
     }
     
-    .logout-btn:hover {
-      background: #c0392b;
+    .toggle-sidebar-btn:active {
+      transform: scale(0.95);
     }
     
-    .main-content {
-      display: flex;
-      flex: 1;
-      padding: 20px;
-      gap: 20px;
-      overflow: hidden;
-      height: calc(100vh - 120px);
-    }
-    
-    .map-container {
-      flex: 2;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    
-    #map {
-      width: 100%;
-      height: 100%;
-    }
-    
-    .sidebar {
-      flex: 1;
-      min-width: 320px;
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      overflow-y: auto;
-    }
-    
-    .form-container {
-      background: #f9f9f9;
-      padding: 20px;
-      border-radius: 8px;
-      border: 1px solid #eee;
-    }
-    
-    .form-container h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #1a2a6c;
-    }
-    
-    .form-group {
-      margin-bottom: 15px;
-    }
-    
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      color: #333;
-    }
-    
-    select, input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      background: white;
-      font-size: 16px;
-    }
-    
-    select:focus, input:focus {
-      outline: none;
-      border-color: #3498db;
-      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-    }
-    
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    
-    .btn {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 4px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .locate-btn {
-      background: #3498db;
-      color: white;
-    }
-    
-    .locate-btn:hover {
-      background: #2980b9;
-    }
-    
-    .submit-btn {
-      background: #4CAF50;
-      color: white;
-    }
-    
-    .submit-btn:hover {
-      background: #45a049;
-    }
-    
-    .incidents-container {
-      background: #f9f9f9;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #eee;
-    }
-    
-    .incidents-container h3 {
-      margin-bottom: 15px;
-      color: #1a2a6c;
-    }
-    
-    .incident-list {
-      list-style: none;
-      padding: 0;
-    }
-    
-    .incident-item {
-      background: white;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 4px;
-      border-left: 4px solid #3498db;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    }
-    
-    .incident-type {
-      font-weight: bold;
-      color: #1a2a6c;
-    }
-    
-    .incident-coords {
-      font-size: 0.9em;
-      color: #666;
-    }
-    
-    .incident-time {
-      font-size: 0.8em;
-      color: #999;
-    }
-    
-    footer {
-      background: #1a2a6c;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-size: 0.9em;
-    }
-    
-    @media (max-width: 768px) {
-      .main-content {
-        flex-direction: column;
+    /* Mobile < 768px : afficher le toggle button */
+    @media (max-width: 767px) {
+      .toggle-sidebar-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
       }
       
-      .map-container {
-        height: 400px;
+      .sidebar {
+        position: fixed;
+        bottom: -100%;
+        left: 0;
+        right: 0;
+        max-height: 50vh;
+        width: 100%;
+        z-index: 999;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+        transition: bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .sidebar.active {
+        bottom: 0;
+      }
+      
+      /* Visualiser le scroll sur mobile */
+      .sidebar::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      .sidebar::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      
+      .sidebar::-webkit-scrollbar-thumb {
+        background: #1a2a6c;
+        border-radius: 3px;
+      }
+      
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background: #b21f1f;
+      }
+    }
+    
+    /* Tablet et au-delà : masquer le toggle */
+    @media (min-width: 768px) {
+      .toggle-sidebar-btn {
+        display: none !important;
+      }
+      
+      .sidebar {
+        position: relative !important;
+        bottom: auto !important;
+        width: auto !important;
+        max-height: 100% !important;
+        z-index: auto !important;
+      }
+    }
+    
+    /* Amélioration du contraste sur mobile */
+    @media (max-width: 767px) {
+      .form-container,
+      .incidents-container {
+        background-color: #f9f9f9;
       }
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">Waze Project</div>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">🗺️ GeoAlert</div>
     <div class="user-info">
-      <span>Bienvenue </span>
+      <span class="user-name">Bienvenue</span>
       <a href="/auth/logout" class="logout-btn">Déconnexion</a>
     </div>
-  </div>
+  </header>
   
+  <!-- CONTENU PRINCIPAL -->
   <div class="main-content">
+    <!-- CONTENEUR CARTE -->
     <div class="map-container">
-      <div id="map"></div>
+      <div id="map" role="application" aria-label="Carte interactive des incidents"></div>
+      
+      <!-- BOUTON TOGGLE POUR MOBILE -->
+      <button class="toggle-sidebar-btn" id="toggle-sidebar-btn" aria-label="Afficher/masquer le formulaire d'ajout d'incident">
+        <span>⬆️ Formulaire</span>
+      </button>
     </div>
     
-    <div class="sidebar">
+    <!-- SIDEBAR : FORMULAIRE & INCIDENTS -->
+    <aside class="sidebar" id="sidebar">
+      <!-- FORMULAIRE D'AJOUT D'INCIDENT -->
       <div class="form-container">
         <h2>Ajouter un incident</h2>
-        <form id="incident-form">
+        <form id="incident-form" novalidate>
           <div class="form-group">
             <label for="type">Type d'incident</label>
-            <select name="type" id="type" required>
+            <select name="type" id="type" required aria-required="true">
               <option value="">-- Choisir le type --</option>
               <option value="accident">Accident</option>
               <option value="bouchon">Bouchon</option>
@@ -252,93 +149,203 @@
           
           <div class="form-group">
             <label for="lat">Latitude</label>
-            <input type="number" id="lat" name="lat" placeholder="Latitude" step="any" readonly required />
+            <input 
+              type="number" 
+              id="lat" 
+              name="lat" 
+              placeholder="Latitude" 
+              step="any" 
+              readonly 
+              required 
+              aria-required="true"
+              inputmode="decimal"
+            />
           </div>
           
           <div class="form-group">
             <label for="lng">Longitude</label>
-            <input type="number" id="lng" name="lng" placeholder="Longitude" step="any" readonly required />
+            <input 
+              type="number" 
+              id="lng" 
+              name="lng" 
+              placeholder="Longitude" 
+              step="any" 
+              readonly 
+              required 
+              aria-required="true"
+              inputmode="decimal"
+            />
           </div>
           
           <div class="btn-group">
-            <button type="button" class="btn locate-btn" id="locate-btn">
-              Activer la localisation
+            <button 
+              type="button" 
+              class="btn locate-btn" 
+              id="locate-btn"
+              aria-label="Utiliser votre position GPS actuelle"
+            >
+              📍 Localisation
             </button>
-            <button type="submit" class="btn submit-btn">
-              Ajouter l'incident
+            <button 
+              type="submit" 
+              class="btn submit-btn"
+              aria-label="Ajouter cet incident à la carte"
+            >
+              ✓ Ajouter
             </button>
           </div>
         </form>
       </div>
       
+      <!-- LISTE DES INCIDENTS RÉCENTS -->
       <div class="incidents-container">
-        <h3>Incidents récents</h3>
-        <ul class="incident-list" id="incident-list">
-           <!-- Boucle EJS pour afficher chaque incident -->
+        <h3>📋 Incidents récents</h3>
+        <ul class="incident-list" id="incident-list" role="list">
+          <!-- Boucle EJS pour afficher les incidents initiaux -->
           <% incidents.forEach(incident => { %>
-            <li class="incident-item">
+            <li class="incident-item" role="listitem">
               <div class="incident-type"><%= incident.type %></div>
-              <div class="incident-coords"><%= incident.lat.toFixed(5) %>, <%= incident.lng.toFixed(5) %></div>
-              <div class="incident-time"><%= new Date(incident.createdAt).toLocaleString('fr-FR') %></div>
+              <div class="incident-coords">
+                <strong>Position :</strong> <%= incident.lat.toFixed(5) %>, <%= incident.lng.toFixed(5) %>
+              </div>
+              <div class="incident-time">
+                <strong>Date :</strong> <%= new Date(incident.createdAt).toLocaleString('fr-FR') %>
+              </div>
             </li>
           <% }); %>
         </ul>
       </div>
-    </div>
+    </aside>
   </div>
   
+  <!-- FOOTER -->
   <footer>
-    Site marocain réalisé par les légendes Kenza Boutarfass / Amine Nahli / Lina Oujdi
+    <div>Site marocain réalisé par Kenza Boutarfass / Amine Nahli / Lina Oujdi</div>
   </footer>
-<!-- Bibliothèque Leaflet pour les cartes -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script> 
+
+  <!-- ============================================
+       SCRIPTS EXTERNES
+       ============================================ -->
+  
+  <!-- Bibliothèque Leaflet pour les cartes -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
   <!-- Bibliothèque Socket.IO pour la communication en temps réel -->
   <script src="/socket.io/socket.io.js"></script>
-  <!-- Script principal de l'application -->
+
+  <!-- ============================================
+       SCRIPT PRINCIPAL DE L'APPLICATION
+       ============================================ -->
   <script>
-    // Initialisation de la carte centrée sur le Maroc (coordonnées de Rabat)
+    // ============================================
+    // 1. INITIALISATION MOBILE - TOGGLE SIDEBAR
+    // ============================================
+    
+    (function initMobileToggle() {
+      const toggleBtn = document.getElementById('toggle-sidebar-btn');
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.querySelector('.main-content');
+      
+      if (!toggleBtn || !sidebar) return;
+      
+      // Fermer le sidebar en cliquant sur la carte
+      const mapContainer = document.querySelector('.map-container');
+      
+      function closeSidebar() {
+        sidebar.classList.remove('active');
+        toggleBtn.textContent = '⬆️ Formulaire';
+      }
+      
+      function toggleSidebar() {
+        sidebar.classList.toggle('active');
+        toggleBtn.textContent = sidebar.classList.contains('active') ? '⬇️ Masquer' : '⬆️ Formulaire';
+      }
+      
+      // Événements
+      toggleBtn.addEventListener('click', toggleSidebar);
+      toggleBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        toggleSidebar();
+      });
+      
+      // Fermer le sidebar au clic sur la carte (désactiver sur desktop)
+      if (mapContainer && window.innerWidth < 768) {
+        mapContainer.addEventListener('click', closeSidebar);
+      }
+      
+      // Gérer le redimensionnement de la fenêtre
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 768) {
+          sidebar.classList.remove('active');
+          if (mapContainer) {
+            mapContainer.removeEventListener('click', closeSidebar);
+          }
+        }
+      });
+    })();
+
+    // ============================================
+    // 2. INITIALISATION DE LA CARTE LEAFLET
+    // ============================================
+    
+    // Initialiser la carte centrée sur le Maroc (coordonnées de Rabat)
     const map = L.map('map').setView([34.0209, -6.8416], 7);
-    // Ajout de la couche de tuiles OpenStreetMap
+    
+    // Ajouter la couche de tuiles OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributeurs'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributeurs',
+      maxZoom: 19
     }).addTo(map);
-// Variables pour gérer les marqueurs
 
-    let marker;  // Marqueur de position sélectionnée
-    let userPositionMarker; // Marqueur de position utilisateur
-    const socket = io(); // Initialisation de la connexion Socket.IO
+    // ============================================
+    // 3. VARIABLES ET CONFIGURATION
+    // ============================================
+    
+    let marker;                    // Marqueur de position sélectionnée
+    let userPositionMarker;        // Marqueur de position utilisateur
+    const socket = io();           // Initialisation Socket.IO
+    const incidentMarkers = new Map(); // Map pour stocker les marqueurs d'incidents
 
-
-    // Fonction pour charger les incidents depuis le serveur
+    // ============================================
+    // 4. FONCTION : CHARGER LES INCIDENTS
+    // ============================================
+    
     async function loadIncidents() {
       try {
-        // Récupération des incidents via l'API
         const response = await fetch('/auth/api/incidents');
         const incidents = await response.json();
-        // Création d'un cercle rouge pour représenter l'incident
+        
         incidents.forEach(incident => {
-          // Ajouter un cercle rouge pour l'incident
-          L.circle([incident.lat, incident.lng], {
-            radius: 100, // Rayon en mètres
-            color: 'red',
+          // Créer un cercle rouge pour représenter l'incident
+          const circle = L.circle([incident.lat, incident.lng], {
+            radius: 100,
+            color: '#b21f1f',
             fillColor: '#f03',
-            fillOpacity: 0.7
-          }).addTo(map)  // Ajout à la carte
-          .bindPopup(`<strong>${incident.type}</strong><br>${new Date(incident.createdAt).toLocaleString('fr-FR')}`);
+            fillOpacity: 0.7,
+            weight: 2
+          }).addTo(map)
+            .bindPopup(`
+              <div style="font-weight: bold; color: #1a2a6c;">${incident.type}</div>
+              <div style="font-size: 0.9em; color: #666;">
+                ${new Date(incident.createdAt).toLocaleString('fr-FR')}
+              </div>
+            `);
+          
+          incidentMarkers.set(incident._id, circle);
         });
       } catch (error) {
         console.error('Erreur lors du chargement des incidents:', error);
       }
     }
 
-   // Gestionnaire d'événement pour le bouton de géolocalisation
+    // ============================================
+    // 5. ÉVÉNEMENT : CLIC SUR BOUTON LOCALISATION
+    // ============================================
+    
     document.getElementById('locate-btn').addEventListener('click', function() {
-      // Vérification du support de la géolocalisation
       if (navigator.geolocation) {
-        // Récupération de la position actuelle
         navigator.geolocation.getCurrentPosition(
           function(position) {
-            // Extraction des coordonnées
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
             
@@ -346,12 +353,12 @@
             document.getElementById('lat').value = lat.toFixed(5);
             document.getElementById('lng').value = lng.toFixed(5);
             
-           // Centrage de la carte sur la position
+            // Centrage de la carte sur la position
             map.setView([lat, lng], 15);
             
-            // Mettre à jour le marqueur de position Utilisateur
+            // Mettre à jour le marqueur de position utilisateur
             if (userPositionMarker) map.removeLayer(userPositionMarker);
-            // Création d'un nouveau marqueur avec effet de pulsation
+            
             userPositionMarker = L.marker([lat, lng], {
               icon: L.divIcon({
                 className: 'user-position-marker',
@@ -359,16 +366,17 @@
                 iconSize: [20, 20]
               })
             }).addTo(map)
-              .bindPopup('Votre position actuelle')
-              .openPopup();// Ouverture automatique
+              .bindPopup('📍 Votre position actuelle')
+              .openPopup();
           },
           function(error) {
+            console.error('Erreur de géolocalisation:', error.message);
             alert('Erreur de géolocalisation : ' + error.message);
           },
           {
-            enableHighAccuracy: true, // Haute précision
-            timeout: 5000, // Délai d'attente (5s)
-            maximumAge: 0 // Pas de cache
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
           }
         );
       } else {
@@ -376,29 +384,49 @@
       }
     });
 
-    // Gestion du clic sur la carte
+    // ============================================
+    // 6. ÉVÉNEMENT : CLIC SUR LA CARTE
+    // ============================================
+    
     map.on('click', function(e) {
-      // Récupération des coordonnées du clic
       const { lat, lng } = e.latlng;
-       // Mise à jour des champs du formulaire
+      
+      // Mise à jour des champs du formulaire
       document.getElementById('lat').value = lat.toFixed(5);
       document.getElementById('lng').value = lng.toFixed(5);
-// Suppression de l'ancien marqueur s'il existe
+      
+      // Supprimer l'ancien marqueur s'il existe
       if (marker) map.removeLayer(marker);
-      // Création d'un nouveau marqueur à la position cliquée
+      
+      // Créer un nouveau marqueur à la position cliquée
       marker = L.marker([lat, lng]).addTo(map)
-        .bindPopup('Position sélectionnée')
+        .bindPopup('📌 Position sélectionnée')
         .openPopup();
+      
+      // Sur mobile, ouvrir le formulaire
+      if (window.innerWidth < 768) {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) {
+          sidebar.classList.add('active');
+          const toggleBtn = document.getElementById('toggle-sidebar-btn');
+          if (toggleBtn) toggleBtn.textContent = '⬇️ Masquer';
+        }
+      }
     });
 
-    // Envoi du formulaire
+    // ============================================
+    // 7. ÉVÉNEMENT : ENVOI DU FORMULAIRE
+    // ============================================
+    
     document.getElementById('incident-form').addEventListener('submit', async function(e) {
-      e.preventDefault();// Empêche le rechargement de la page
+      e.preventDefault();
+      
       // Récupération des valeurs du formulaire
       const type = document.getElementById('type').value;
       const lat = document.getElementById('lat').value;
       const lng = document.getElementById('lng').value;
-      // Validation des champs
+      
+      // Validation
       if (!type || !lat || !lng) {
         alert('Veuillez remplir tous les champs');
         return;
@@ -421,8 +449,15 @@
           document.getElementById('lng').value = '';
           
           alert('Incident ajouté avec succès!');
+          
+          // Fermer le sidebar sur mobile
+          const sidebar = document.getElementById('sidebar');
+          if (sidebar && window.innerWidth < 768) {
+            sidebar.classList.remove('active');
+            const toggleBtn = document.getElementById('toggle-sidebar-btn');
+            if (toggleBtn) toggleBtn.textContent = '⬆️ Formulaire';
+          }
         } else {
-          // Gestion des erreurs serveur
           const error = await response.text();
           alert('Erreur: ' + error);
         }
@@ -432,32 +467,57 @@
       }
     });
 
-    // Recevoir les nouveaux incidents via Socket.io
+    // ============================================
+    // 8. SOCKET.IO : RECEVOIR LES NOUVEAUX INCIDENTS
+    // ============================================
+    
     socket.on('newIncident', (incident) => {
       // Ajouter un cercle rouge pour le nouvel incident
-      L.circle([incident.lat, incident.lng], {
-        radius: 100, // Rayon en mètres
-        color: 'red',
+      const circle = L.circle([incident.lat, incident.lng], {
+        radius: 100,
+        color: '#b21f1f',
         fillColor: '#f03',
-        fillOpacity: 0.7
+        fillOpacity: 0.7,
+        weight: 2
       }).addTo(map)
-      .bindPopup(`<strong>${incident.type}</strong><br>${new Date(incident.createdAt).toLocaleString('fr-FR')}`);
+        .bindPopup(`
+          <div style="font-weight: bold; color: #1a2a6c;">${incident.type}</div>
+          <div style="font-size: 0.9em; color: #666;">
+            ${new Date(incident.createdAt).toLocaleString('fr-FR')}
+          </div>
+        `);
       
-      // Ajouter à la liste
+      incidentMarkers.set(incident._id, circle);
+      
+      // Ajouter à la liste des incidents
       const incidentList = document.getElementById('incident-list');
       const newItem = document.createElement('li');
       newItem.className = 'incident-item';
+      newItem.setAttribute('role', 'listitem');
       newItem.innerHTML = `
         <div class="incident-type">${incident.type}</div>
-        <div class="incident-coords">${incident.lat.toFixed(5)}, ${incident.lng.toFixed(5)}</div>
-        <div class="incident-time">${new Date(incident.createdAt).toLocaleString('fr-FR')}</div>
+        <div class="incident-coords">
+          <strong>Position :</strong> ${incident.lat.toFixed(5)}, ${incident.lng.toFixed(5)}
+        </div>
+        <div class="incident-time">
+          <strong>Date :</strong> ${new Date(incident.createdAt).toLocaleString('fr-FR')}
+        </div>
       `;
-      // Insertion en haut de la liste
-      incidentList.insertBefore(newItem, incidentList.firstChild);
+      
+      if (incidentList) {
+        incidentList.insertBefore(newItem, incidentList.firstChild);
+      }
     });
 
+    // ============================================
+    // 9. DÉMARRAGE
+    // ============================================
+    
     // Charger les incidents au démarrage
     loadIncidents();
+    
+    // Log de démarrage
+    console.log('✅ GeoAlert initialisé avec succès');
   </script>
 </body>
 </html>

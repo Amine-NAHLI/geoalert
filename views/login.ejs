@@ -2,25 +2,310 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Connexion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1a2a6c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>GeoAlert - Connexion</title>
   <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/sty.css">
-
   
+  <style>
+    /* ============================================
+       STYLES SPÉCIFIQUES PAGE CONNEXION
+       ============================================ */
+    
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, #1a2a6c 0%, #2a3f8f 50%, #b21f1f 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .header-auth {
+      background: linear-gradient(90deg, #1a2a6c, #b21f1f, #1a2a6c);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .header-auth h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    
+    .auth-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .auth-container {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      border-radius: 10px;
+      padding: 30px 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .auth-container h1 {
+      text-align: center;
+      color: #1a2a6c;
+      margin: 0 0 10px 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    
+    .auth-subtitle {
+      text-align: center;
+      color: #666;
+      margin: 0;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    
+    .auth-container form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .auth-container input {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 15px;
+      border: 1.5px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      font-family: inherit;
+      background-color: #f9f9f9;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+    
+    .auth-container input:focus {
+      outline: none;
+      border-color: #1a2a6c;
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(26, 42, 108, 0.1);
+    }
+    
+    .auth-container input::placeholder {
+      color: #999;
+    }
+    
+    .auth-container button {
+      width: 100%;
+      min-height: 48px;
+      padding: 14px 20px;
+      background: linear-gradient(90deg, #1a2a6c, #b21f1f);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(26, 42, 108, 0.3);
+    }
+    
+    .auth-container button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(26, 42, 108, 0.4);
+    }
+    
+    .auth-container button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(26, 42, 108, 0.3);
+    }
+    
+    .auth-container button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .auth-container .error {
+      background-color: #ffe6e6;
+      border: 1px solid #ffcccc;
+      color: #b21f1f;
+      padding: 12px 15px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 0;
+      text-align: center;
+    }
+    
+    .auth-container .success {
+      background-color: #e6ffe6;
+      border: 1px solid #ccffcc;
+      color: #27ae60;
+      padding: 12px 15px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 0;
+      text-align: center;
+    }
+    
+    .auth-footer {
+      text-align: center;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+      margin-top: 10px;
+    }
+    
+    .auth-footer p {
+      margin: 0;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .auth-footer a {
+      color: #1a2a6c;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    
+    .auth-footer a:hover {
+      color: #b21f1f;
+      text-decoration: underline;
+    }
+    
+    /* Mobile < 480px */
+    @media (max-width: 479px) {
+      .header-auth {
+        padding: 16px 12px;
+      }
+      
+      .header-auth h1 {
+        font-size: 20px;
+      }
+      
+      .auth-wrapper {
+        padding: 16px;
+      }
+      
+      .auth-container {
+        padding: 24px 16px;
+        border-radius: 8px;
+      }
+      
+      .auth-container h1 {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+    }
+    
+    /* Tablet 768px+ */
+    @media (min-width: 768px) {
+      .auth-wrapper {
+        padding: 40px 20px;
+      }
+      
+      .auth-container {
+        padding: 40px 30px;
+        border-radius: 12px;
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+      }
+      
+      .auth-container h1 {
+        font-size: 32px;
+        margin-bottom: 12px;
+      }
+      
+      .auth-subtitle {
+        margin-bottom: 20px;
+      }
+      
+      .auth-container form {
+        gap: 18px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="auth-container"> <!-- 8. Conteneur principal pour le formulaire d'authentification -->
-    <h1>Connexion</h1>
-    <% if (typeof error !== 'undefined' && error) { %> <!-- 10. Bloc conditionnel pour afficher les erreurs -->
-      <p class="error"><%= error %></p> <!-- 11. Paragraphe d'erreur avec classe pour le style -->
-    <% } %>
-    <!-- 12. Formulaire de connexion avec action vers la route /auth/login -->
-    <form action="/auth/login" method="POST">
-      <input type="email" name="email" placeholder="Email" required>
-      <input type="password" name="password" placeholder="Mot de passe" required>
-      <button type="submit">Se connecter</button>
-    </form>
-    <p>Pas encore inscrit ? <a href="/auth/register">S'inscrire</a></p>
+  <!-- HEADER -->
+  <header class="header-auth">
+    <h1>🗺️ GeoAlert</h1>
+  </header>
+  
+  <!-- WRAPPER -->
+  <div class="auth-wrapper">
+    <!-- FORMULAIRE CONNEXION -->
+    <div class="auth-container">
+      <div>
+        <h1>Connexion</h1>
+        <p class="auth-subtitle">Accédez à votre compte GeoAlert</p>
+      </div>
+      
+      <!-- MESSAGE D'ERREUR -->
+      <% if (typeof error !== 'undefined' && error) { %>
+        <p class="error"><strong>⚠️ Erreur</strong><br><%= error %></p>
+      <% } %>
+      
+      <!-- FORMULAIRE -->
+      <form action="/auth/login" method="POST" novalidate>
+        <div class="form-group">
+          <label for="email">Adresse email</label>
+          <input 
+            type="email" 
+            id="email"
+            name="email" 
+            placeholder="votre@email.com" 
+            required 
+            aria-required="true"
+            inputmode="email"
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input 
+            type="password" 
+            id="password"
+            name="password" 
+            placeholder="•••••••••" 
+            required
+            aria-required="true"
+            inputmode="password"
+          >
+        </div>
+        
+        <button type="submit" aria-label="Se connecter à GeoAlert">Se connecter</button>
+      </form>
+      
+      <!-- LIEN INSCRIPTION -->
+      <div class="auth-footer">
+        <p>Pas encore inscrit ? <a href="/auth/register">Créer un compte</a></p>
+      </div>
+    </div>
   </div>
 </body>
 </html>
