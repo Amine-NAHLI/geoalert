@@ -24,6 +24,8 @@ require('dotenv').config();
 
 // Création de l'application Express
 const app = express();
+app.set('trust proxy', 1);
+
 
 // Création d'un serveur HTTP avec Express
 const server = http.createServer(app);
@@ -51,7 +53,7 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use(session({
   secret: process.env.SESSION_SECRET, // Clé secrète pour signer les cookies
   resave: false, // Ne pas sauvegarder la session si elle n'a pas été modifiée
-  saveUninitialized: true, // Sauvegarder les sessions même non initialisées
+  saveUninitialized: false, // Sauvegarder les sessions même non initialisées
   store: MongoStore.create({ 
     mongoUrl: process.env.MONGO_URI, // Lien vers MongoDB
     ttl: 24 * 60 * 60 // Durée de vie de la session en secondes (1 jour)
