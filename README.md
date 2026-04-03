@@ -1,5 +1,11 @@
 # GeoAlert - Application de Trafic en Temps Réel
 
+## 🌟 À propos
+
+GeoAlert est une plateforme citoyenne de sécurité routière dédiée au Maroc. L'objectif est simple : connecter les conducteurs pour mieux anticiper les aléas du trafic. En quelques clics, les utilisateurs signalent des incidents et visualisent ceux des autres sur une carte interactive. Le système fonctionne en temps réel grâce à Socket.IO, pour que chaque alerte soit immédiatement partagée avec la communauté.
+
+Cette application est conçue pour être intuitive et accessible, avec un parcours complet : inscription, authentification, géolocalisation automatique, ajout d'incidents et suivi en direct.
+
 ## 📋 Description du Projet
 
 GeoAlert est une application web de type Waze développée pour le Maroc, permettant aux utilisateurs de signaler et visualiser des incidents de trafic en temps réel. L'application offre une interface cartographique interactive où les utilisateurs peuvent ajouter des incidents (accidents, bouchons, radars, travaux, dangers routiers) et voir les signalements des autres utilisateurs en temps réel.
