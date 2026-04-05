@@ -1,7 +1,43 @@
 // public/script.js
 //JavaScript côté client (gestion des interactions dans le navigateur).
+
+// ============================================
+// GESTION DU LOADER GLOBAL
+// ============================================
+
+/**
+ * Affiche le loader global centré
+ * @param {string} message - Message optionnel à afficher (défaut: "Chargement des données trafic...")
+ */
+function showLoader(message = "Chargement des données trafic...") {
+    const loader = document.getElementById('global-loader');
+    const textElement = loader.querySelector('.loader-text');
+
+    if (textElement) {
+        textElement.textContent = message;
+    }
+
+    loader.classList.add('show');
+    loader.style.display = 'flex';
+}
+
+/**
+ * Masque le loader global
+ */
+function hideLoader() {
+    const loader = document.getElementById('global-loader');
+    loader.classList.remove('show');
+
+    // Délai pour l'animation de disparition
+    setTimeout(() => {
+        loader.style.display = 'none';
+    }, 300);
+}
+
 // Attendre que le DOM soit complètement chargé
 document.addEventListener('DOMContentLoaded', () => {
+    // Afficher le loader pendant l'initialisation
+    showLoader("Initialisation de la carte...");
     // Initialiser la carte Leaflet centrée sur le Maroc avec un zoom de niveau 7
     const map = L.map('map').setView([34.0209, -6.8416], 7);
     // Ajouter une couche de tuiles OpenStreetMap à la carte
@@ -65,29 +101,26 @@ document.addEventListener('DOMContentLoaded', () => {
         activateLocationBtn.addEventListener('click', () => {
            // Vérifier si la géolocalisation est supportée
             if (navigator.geolocation) {
+                showLoader("Localisation en cours...");
               // Obtenir la position actuelle
                 navigator.geolocation.getCurrentPosition(position => {
                     const { latitude, longitude } = position.coords;
-                    
+
                     // Mettre à jour les champs du formulaire
                     document.getElementById('lat').value = latitude.toFixed(5);
                     document.getElementById('lng').value = longitude.toFixed(5);
-                    
+
                     // Mettre à jour la position sur la carte
                     updateUserPosition(latitude, longitude);
+                    hideLoader();
                 }, error => {
                     console.error('Erreur de géolocalisation:', error);
                     alert('Impossible d\'obtenir votre position');
+                    hideLoader();
                 });
             } else {
                 alert('La géolocalisation n\'est pas supportée par votre navigateur');
-            }
-        });
-    }
-
-    // Gestion du clic sur la carte
-    map.on('click', function(e) {
-        const { lat, lng } = e.latlng;
+                hideLoader();
         
         // Mettre à jour les champs du formulaire
         document.getElementById('lat').value = lat.toFixed(5);
@@ -118,8 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            try { 
-              // Envoyer les données au serveur''''
+            try {
+                showLoader("Ajout de l'incident...");
+              // Envoyer les données au serveur
                 const response = await fetch('/auth/add-incident', {
                     method: 'POST',
                     headers: {
@@ -132,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Réinitialiser le formulaire
                     incidentForm.reset();
                     alert('Incident ajouté avec succès!');
-                    
+
                     // Supprimer le marqueur de position sélectionnée
                     if (selectedPositionMarker) {
                         map.removeLayer(selectedPositionMarker);
@@ -145,6 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error('Erreur:', error);
                 alert('Erreur lors de l\'ajout de l\'incident');
+            } finally {
+                hideLoader();
             }
         });
     }
@@ -152,14 +188,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Charger les incidents existants
     const loadIncidents = async () => {
         try {
+            showLoader("Chargement des incidents...");
             const response = await fetch('/auth/api/incidents');
             const incidents = await response.json();
-            
+
             incidents.forEach(incident => {
                 addIncidentToMap(incident);
             });
         } catch (error) {
             console.error('Erreur lors du chargement des incidents:', error);
+        } finally {
+            hideLoader();
         }
     };
     
@@ -182,4 +221,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Charger les incidents au démarrage
     loadIncidents();
+
+    // Masquer le loader d'initialisation après un court délai
+    setTimeout(() => {
+        hideLoader();
+    }, 1000);
 });

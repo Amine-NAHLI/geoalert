@@ -760,3 +760,146 @@ footer {
   box-shadow: -2px 0 10px rgba(0,0,0,0.1);
 }
 
+/* ============================================
+   LOADER GLOBAL - THÈME MAROCAIN
+   ============================================ */
+
+/* Overlay sombre semi-transparent */
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 5, 16, 0.85);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.loader-overlay.show {
+  opacity: 1;
+}
+
+/* Conteneur du loader */
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 300px;
+}
+
+/* Animation radar/pulse */
+.radar-spinner {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 20px;
+}
+
+.radar-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: var(--color-accent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 20px rgba(178, 31, 31, 0.6);
+}
+
+.radar-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--color-accent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: radarPulse 2s infinite ease-out;
+  opacity: 0;
+}
+
+.radar-pulse.delay-1 {
+  animation-delay: 0.5s;
+}
+
+.radar-pulse.delay-2 {
+  animation-delay: 1s;
+}
+
+@keyframes radarPulse {
+  0% {
+    width: 40px;
+    height: 40px;
+    opacity: 1;
+  }
+  100% {
+    width: 120px;
+    height: 120px;
+    opacity: 0;
+  }
+}
+
+/* Spinner classique */
+.loader-spinner {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.spinner-inner {
+  width: 100%;
+  height: 100%;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid var(--color-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Texte de chargement */
+.loader-text {
+  color: var(--color-white);
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'Rajdhani', sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  animation: textPulse 2s infinite;
+}
+
+@keyframes textPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .radar-spinner {
+    width: 100px;
+    height: 100px;
+  }
+
+  .radar-pulse {
+    width: 30px;
+    height: 30px;
+  }
+
+  .loader-text {
+    font-size: 14px;
+  }
+}
+
