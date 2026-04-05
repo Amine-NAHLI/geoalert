@@ -47,7 +47,6 @@ class GlobalLoader {
                 left: 0;
                 width: 100%;
                 z-index: 10000;
-                pointer-events: none;
             }
 
             .loader-overlay {
@@ -61,6 +60,8 @@ class GlobalLoader {
                 align-items: center;
                 justify-content: center;
                 z-index: 10001;
+                pointer-events: auto; /* Bloque les interactions */
+                backdrop-filter: blur(2px); /* Effet de flou pour l'overlay */
             }
 
             .loader-content {
@@ -70,13 +71,26 @@ class GlobalLoader {
             }
 
             .loader-spinner {
-                width: 50px;
-                height: 50px;
-                border: 4px solid rgba(255, 255, 255, 0.3);
+                width: 60px;
+                height: 60px;
+                border: 4px solid rgba(255, 255, 255, 0.2);
                 border-top: 4px solid #c0392b;
                 border-radius: 50%;
                 animation: spin 1s linear infinite;
-                margin: 0 auto 20px;
+                position: relative;
+            }
+
+            .loader-spinner::after {
+                content: '';
+                position: absolute;
+                top: -4px;
+                left: -4px;
+                width: 60px;
+                height: 60px;
+                border: 4px solid transparent;
+                border-top: 4px solid #e74c3c;
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite reverse;
             }
 
             @keyframes spin {
@@ -204,7 +218,7 @@ class GlobalLoader {
         const loader = document.getElementById('global-loader');
         if (this.activeRequests > 0) {
             loader.classList.add('show-progress');
-            if (this.activeRequests > 1) {
+            if (this.activeRequests >= 1) { // Afficher l'overlay dès la première requête
                 loader.classList.add('show-overlay');
             }
         } else {
